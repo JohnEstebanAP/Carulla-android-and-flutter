@@ -66,6 +66,9 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: BackButton(
+          onPressed: () => {Navigator.of(context).pop()},
+        ),
         title: Text(widget.title),
       ),
       body: Center(
@@ -88,17 +91,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 _channel.invokeMethod<void>("next", _counter);
               },
               child: const Text('Next'),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                // Use the url_launcher plugin to open the Flutter docs in
-                // a browser.
-                final url = Uri.parse('https://flutter.dev/docs');
-                if (await launcher.canLaunchUrl(url)) {
-                  await launcher.launchUrl(url);
-                }
-              },
-              child: const Text('Open Flutter Docs'),
             ),
           ],
         ),

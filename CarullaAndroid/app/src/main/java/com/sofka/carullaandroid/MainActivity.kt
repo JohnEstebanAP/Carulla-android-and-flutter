@@ -7,6 +7,13 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import com.sofka.carullaandroid.databinding.ActivityMainBinding
+import io.flutter.FlutterInjector
+import io.flutter.embedding.android.FlutterActivity
+import io.flutter.embedding.engine.FlutterEngine
+import io.flutter.embedding.engine.FlutterEngineCache
+import io.flutter.embedding.engine.FlutterEngineGroup
+import io.flutter.embedding.engine.dart.DartExecutor
+import io.flutter.plugin.common.MethodChannel
 
 class MainActivity : AppCompatActivity(), DataModelObserver {
     private lateinit var binding: ActivityMainBinding
@@ -31,6 +38,17 @@ class MainActivity : AppCompatActivity(), DataModelObserver {
         //intancio mi observer
         DataModel.instance.addObserver(this)
 
+        val dartEntrypoint =
+            DartExecutor.DartEntrypoint(
+                FlutterInjector.instance().flutterLoader().findAppBundlePath(), "bottomMain"
+            )
+
+        val engine = FlutterEngineGroup(this).createAndRunEngine(this, dartEntrypoint)
+
+        FlutterEngineCache
+            .getInstance()
+            .put("my_engine_id", engine)
+
         with(binding) {
 
             countView = textCounter
@@ -41,10 +59,9 @@ class MainActivity : AppCompatActivity(), DataModelObserver {
             }
 
             buttonFlutter.setOnClickListener {
-                val nextClass =
-                    if (mainActivityIdentifier % 2 == 0) SingleFlutterActivity::class.java else DoubleFlutterActivity::class.java
-                val flutterIntent = Intent(this@MainActivity, nextClass)
-                startActivity(flutterIntent)
+                startActivity(
+                    Intent(this@MainActivity, SingleFlutterActivity::class.java)
+                )
             }
         }
     }

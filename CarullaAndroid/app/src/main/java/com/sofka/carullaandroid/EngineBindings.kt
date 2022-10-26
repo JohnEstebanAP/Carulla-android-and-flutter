@@ -4,6 +4,7 @@ import android.app.Activity
 import android.widget.Toast
 import io.flutter.FlutterInjector
 import io.flutter.embedding.engine.FlutterEngine
+import io.flutter.embedding.engine.FlutterEngineCache
 import io.flutter.embedding.engine.FlutterEngineGroup
 import io.flutter.embedding.engine.dart.DartExecutor
 import io.flutter.plugin.common.MethodChannel
@@ -49,9 +50,14 @@ class EngineBindings(activity: Activity, delegate: EngineBindingsDelegate, entry
 
         engine = app.engines.createAndRunEngine(activity, dartEntrypoint)
         //engine = FlutterEngineGroup(activity).createAndRunEngine(activity, dartEntrypoint);
-       // engine = FlutterEngine(activity)
+        // engine = FlutterEngine(activity)
         this.delegate = delegate
         channel = MethodChannel(engine.dartExecutor.binaryMessenger, "carulla-flutters")
+
+        FlutterEngineCache
+            .getInstance()
+            .put("my_engine_id", engine)
+
     }
 
     /**
@@ -81,7 +87,7 @@ class EngineBindings(activity: Activity, delegate: EngineBindingsDelegate, entry
      * This tears down the messaging connections on the platform channel and the DataModel.
      */
     fun detach() {
-        engine.destroy();
+        engine.destroy()
         DataModel.instance.removeObserver(this)
         channel.setMethodCallHandler(null)
     }
